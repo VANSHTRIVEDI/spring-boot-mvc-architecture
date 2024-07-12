@@ -4,6 +4,7 @@ package com.codingshuttle.springbootwebtutorial.springbootwebtutorial.controller
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -13,46 +14,33 @@ import java.util.List;
 @RequestMapping(path = "/employees")
 public class EmployeeController {
 
-    final EmployeeRepository employeeRepository;
+//    final EmployeeRepository employeeRepository;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    final EmployeeService employeeService;
+
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
-    //we are making this EmployeeEntity just for now to learn it's not a good practice in between
-    //entity and controller there will be a service layer
     @GetMapping(path = "/{employeeID}")
-   public EmployeeEntity getEmployeeById(@PathVariable(name="employeeID") Long id)
+   public EmployeeDTO getEmployeeById(@PathVariable(name="employeeID") Long id)
    {
-       /*
-           employeeRepository.findById(id)
-           this will return a optional data
-           optional is class inside java.util
-           which wraps the null value so that you can handle it accordingly
-           employeeRepository.findById(id)  if its output is a null than we handle it
 
-        */
-       return  employeeRepository.findById(id).orElse(null);
+       return  employeeService.getEmployeeById(id);
    }
 
     @GetMapping
-    public List<EmployeeEntity> getEmployees(@RequestParam(required = false) Integer age, @RequestParam(required = false) String name)
+    public List<EmployeeDTO> getEmployees(@RequestParam(required = false) Integer age, @RequestParam(required = false) String name)
     {
-        return  employeeRepository.findAll();
+        return  employeeService.getEmployees();
     }
 
     @PostMapping
-    public EmployeeEntity postEmployee(@RequestBody EmployeeEntity inputEmployee)
+    public EmployeeDTO postEmployee(@RequestBody EmployeeDTO inputEmployee)
     {
-        return employeeRepository.save(inputEmployee);
+        return employeeService.postEmployee(inputEmployee);
     }
 
-
-//    @PutMapping
-//    public  String postEmployeed()
-//    {
-//        return "HI POSTED AN EMPLOYEE";
-//    }
 
 
 
