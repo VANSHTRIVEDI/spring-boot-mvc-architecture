@@ -25,5 +25,12 @@ public class EmployeeEntity {
     private  String email;
     private  Integer age;
     private LocalDate dateOfJoining;
+
+
+    //if ever there is an error like active=null and you are not getting expected value
+    //if may be because of jackson was unable to serial and deserialize the value properly
+    //in that case we use @JsonProperty("active")  instead of active there will name of filed which was giving null
+    //it tell json to use whole active as property
+    //this should be done in both layers cause serial and deserialization happen in entity and dto both
     private  Boolean active;
 }
