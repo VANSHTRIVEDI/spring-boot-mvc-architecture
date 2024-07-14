@@ -21,9 +21,12 @@ public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private  Long id;
+
+
     private  String name;
     private  String email;
     private  Integer age;
+    private  double salary;
     private LocalDate dateOfJoining;
 
 
@@ -33,4 +36,5 @@ public class EmployeeEntity {
     //it tell json to use whole active as property
     //this should be done in both layers cause serial and deserialization happen in entity and dto both
     private  Boolean active;
+    private  String role;
 }
