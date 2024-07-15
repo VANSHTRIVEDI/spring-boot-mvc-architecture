@@ -1,6 +1,7 @@
 package com.codingshuttle.springbootwebtutorial.springbootwebtutorial.controllers;
 
 
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.Exception.ResourceNotFoundException;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
@@ -12,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping(path = "/employees")
@@ -36,8 +34,12 @@ public class EmployeeController {
    {
         Optional<EmployeeDTO> employeeDTO=  employeeService.getEmployeeById(id);
 
-       return  employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+       return  employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElseThrow(()->new ResourceNotFoundException("Element not found with id : "+id));
    }
+
+
+
+
 
     @GetMapping
     public ResponseEntity<List<EmployeeDTO>> getEmployees(@RequestParam(required = false) Integer age, @RequestParam(required = false) String name)

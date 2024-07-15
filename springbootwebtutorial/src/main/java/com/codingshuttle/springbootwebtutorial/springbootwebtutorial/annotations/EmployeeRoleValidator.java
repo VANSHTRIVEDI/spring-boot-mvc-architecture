@@ -13,8 +13,9 @@ public class EmployeeRoleValidator implements ConstraintValidator<EmployeeRoleVa
         one way to do it
     * return s.equals("ADMIN") || s.equals("USER");
     */
+       if(s==null)return  false;
 
-        List<String> roles=List.of("ADMIN","USER");
+       List<String> roles=List.of("ADMIN","USER");
         return roles.contains(s);
     }
 }

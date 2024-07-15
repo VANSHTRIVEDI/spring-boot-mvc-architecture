@@ -1,5 +1,6 @@
 package com.codingshuttle.springbootwebtutorial.springbootwebtutorial.services;
 
+import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.Exception.ResourceNotFoundException;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.dto.EmployeeDTO;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.entities.EmployeeEntity;
 import com.codingshuttle.springbootwebtutorial.springbootwebtutorial.repositories.EmployeeRepository;
@@ -53,6 +54,10 @@ public class EmployeeService {
 
     public EmployeeDTO updateEmployeeById(Long employeeId, EmployeeDTO employeeDTO) {
 
+        //one way to it is this second way is you can return exception when no employee found
+        //the other way we're as happening below we can make a new instance of employee for that and then add data to it
+        employeeExistById(employeeId);
+
         EmployeeEntity employeeEntity=modelMapper.map(employeeDTO,EmployeeEntity.class);
 
         //this is work as a way hashmap in java
@@ -65,18 +70,9 @@ public class EmployeeService {
     }
 
     public boolean deleteEmployeeById(Long employeeId) {
-
-        boolean idExist=employeeExistById(employeeId);
-         if(idExist)
-         {
-             employeeRepository.deleteById(employeeId);
-             return true;
-         }
-
-         return  false;
-
-
-
+       employeeExistById(employeeId);
+        employeeRepository.deleteById(employeeId);
+        return true;
 
         /*
 
@@ -92,9 +88,7 @@ public class EmployeeService {
     }
 
     public EmployeeDTO updatePartialEmployeeById(Long employeeId, Map<String, Object> updates) {
-        boolean idExist=employeeExistById(employeeId);
-        if(!idExist)return  null;
-
+       employeeExistById(employeeId);
         //we can use get here because we now findById(employeeId) is never going to be null
         EmployeeEntity employeeEntity=employeeRepository.findById(employeeId).get();
 
@@ -120,7 +114,10 @@ public class EmployeeService {
 
     public boolean employeeExistById(Long employeeId)
     {
+        boolean isExist=employeeRepository.existsById(employeeId);
+        if(!isExist)throw new ResourceNotFoundException("Resource Not Found Exception");
 
-        return employeeRepository.existsById(employeeId);
+
+        return true;
     }
 }
