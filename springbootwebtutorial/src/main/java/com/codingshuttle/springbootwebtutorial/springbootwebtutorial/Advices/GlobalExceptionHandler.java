@@ -9,27 +9,26 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice  //this takes control of every controller
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> ResourceNotFound(ResourceNotFoundException exception)
+    public ResponseEntity<ApiResponse<?>> ResourceNotFound(ResourceNotFoundException exception)
     {
         ApiError error=ApiError.builder()
                 .status(HttpStatus.NOT_FOUND)
                 .message(exception.getMessage())
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.NOT_FOUND) ;
+        return buildErrorResponseEntity(error);
     }
 
 
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleInputValidationException(MethodArgumentNotValidException exception)
+    public ResponseEntity<ApiResponse<?>> handleInputValidationException(MethodArgumentNotValidException exception)
     {
         List<String>listOfError=exception.getBindingResult().getAllErrors().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
 
@@ -37,17 +36,21 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST).subErrors(listOfError)
                 .message("Input validation Error")
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST) ;
+        return buildErrorResponseEntity(error);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleInternalServerError(Exception exception)
+    public ResponseEntity<ApiResponse<?>> handleInternalServerError(Exception exception)
     {
         ApiError error=ApiError.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message(exception.getMessage())
                 .build();
-        return new ResponseEntity<>(error,HttpStatus.INTERNAL_SERVER_ERROR) ;
+        return buildErrorResponseEntity(error);
+    }
+
+    private ResponseEntity<ApiResponse<?>> buildErrorResponseEntity(ApiError error) {
+         return new ResponseEntity<>(new ApiResponse<>(error),error.getStatus());
     }
 
 
